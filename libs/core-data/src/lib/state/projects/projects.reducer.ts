@@ -1,4 +1,5 @@
 import { Project } from './../../projects/project.model';
+import { ProjectsActionTypes } from './projects.actions';
 
 const initialProjects: Project[] = [
   {
@@ -27,7 +28,7 @@ const initialProjects: Project[] = [
   }
 ];
 
-const createProject = (projects, project) => [...projects, project];
+const addProject = (projects, project) => [...projects, project];
 const updateProject = (projects, project) => projects.map(p => {
   return p.id === project.id ? Object.assign({}, project) : p;
 });
@@ -50,25 +51,25 @@ export const initialState : ProjectsState = {
 export function projectsReducer(
   state = initialState, action): ProjectsState {
     switch(action.type) {
-      case 'select':
+      case ProjectsActionTypes.SelectProject:
         return {
           selectedProjectId: action.payload,
           projects: state.projects
         }
-      case 'create':
+      case ProjectsActionTypes.AddProject:
         // delegate to a stand alone function
         // Why? Because it is TESTABLE!
         // Nested Logic, alongside Hidden State are 2 of the "Axis of Evil of Testing"
         return {
             selectedProjectId: state.selectedProjectId,
-            projects: createProject(state.projects, action.payload)
+            projects: addProject(state.projects, action.payload)
         }
-      case 'update':
+      case ProjectsActionTypes.UpdateProject:
         return {
             selectedProjectId: state.selectedProjectId,
             projects: updateProject(state.projects, action.payload)
         }
-      case 'delete':
+      case ProjectsActionTypes.DeleteProject:
         // delegate to a stand alone function
         // Why? Because it is TESTABLE!
         // Nested Logic, alongside Hidden State are 2 of the "Axis of Evil of Testing"
@@ -78,7 +79,5 @@ export function projectsReducer(
         }
       default:
         return state;
-
-
     }
 }

@@ -1,3 +1,4 @@
+import { AddProject, UpdateProject, DeleteProject } from './../../../../../libs/core-data/src/lib/state/projects/projects.actions';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
@@ -69,7 +70,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   createProject(project) {
-    this.store.dispatch({type:'create', payload: project});
+    this.store.dispatch(new AddProject(project));
 
     //These will eventually go awap
 
@@ -81,7 +82,7 @@ export class ProjectsComponent implements OnInit {
 
   updateProject(project) {
 
-    this.store.dispatch({type:'update', payload:project});
+    this.store.dispatch(new UpdateProject(project));
 
     this.ns.emit('Project updated!');
     //this.getProjects();
@@ -91,7 +92,7 @@ export class ProjectsComponent implements OnInit {
 
   deleteProject(project) {
 
-    this.store.dispatch({type:'delete', payload:project})
+    this.store.dispatch(new DeleteProject(project));
 
     this.ns.emit('Project deleted!');
     // this.getProjects();
