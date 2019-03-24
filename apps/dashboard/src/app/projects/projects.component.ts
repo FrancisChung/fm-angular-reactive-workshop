@@ -1,6 +1,8 @@
+import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
-import { Customer, Project, ProjectsService, NotificationsService, CustomersService } from '@workshop/core-data';
+import { Customer, Project, ProjectsService, NotificationsService, CustomersService, ProjectsState } from '@workshop/core-data';
+import { map } from 'rxjs/operators';
 
 const emptyProject: Project = {
   id: null,
@@ -24,7 +26,13 @@ export class ProjectsComponent implements OnInit {
   constructor(
     private projectsService: ProjectsService,
     private customerService: CustomersService,
-    private ns: NotificationsService) { }
+    private store: Store<ProjectsState>,
+    private ns: NotificationsService) {
+      this.projects$ = store.pipe(
+        select('projects'),
+        map((projectsState : ProjectsState)=> projectsState.projects)
+      )
+    }
 
   ngOnInit() {
     this.getProjects();
@@ -49,7 +57,7 @@ export class ProjectsComponent implements OnInit {
   }
 
   getProjects() {
-    this.projects$ = this.projectsService.all();
+    //this.projects$ = this.projectsService.all();
   }
 
   saveProject(project) {
@@ -61,30 +69,33 @@ export class ProjectsComponent implements OnInit {
   }
 
   createProject(project) {
-    this.projectsService.create(project)
-      .subscribe(response => {
-        this.ns.emit('Project created!');
-        this.getProjects();
-        this.resetCurrentProject();
-      });
+    this.store.dispatch({type:'create', payload: project});
+
+    //These will eventually go awap
+
+    this.ns.emit('Project created!');
+    //this.getProjects();
+    this.resetCurrentProject();
+
   }
 
   updateProject(project) {
-    this.projectsService.update(project)
-      .subscribe(response => {
-        this.ns.emit('Project saved!');
-        this.getProjects();
-        this.resetCurrentProject();
-      });
+
+    this.store.dispatch({type:'update', payload:project});
+
+    this.ns.emit('Project updated!');
+    //this.getProjects();
+    this.resetCurrentProject();
+
   }
 
   deleteProject(project) {
-    this.projectsService.delete(project)
-      .subscribe(response => {
-        this.ns.emit('Project deleted!');
-        this.getProjects();
-        this.resetCurrentProject();
-      });
+
+    this.store.dispatch({type:'delete', payload:project})
+
+    this.ns.emit('Project deleted!');
+    // this.getProjects();
+    this.resetCurrentProject();
   }
 }
 
