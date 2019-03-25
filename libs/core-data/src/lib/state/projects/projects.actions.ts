@@ -3,6 +3,7 @@ import { Project } from "@workshop/core-data";
 
 export enum ProjectsActionTypes {
   SelectProject = '[Projects] Selected',
+  LoadProjects = '[Projects] Load Data',
   AddProject = '[Projects] Add Data',
   UpdateProject = '[Projects] Update Data',
   DeleteProject = '[Projects] Delete Data'
@@ -12,6 +13,11 @@ export class SelectProject implements Action {
   readonly type = ProjectsActionTypes.SelectProject;
   constructor (private payload: Project) {
   }
+}
+
+export class LoadProjects implements Action {
+  readonly type = ProjectsActionTypes.LoadProjects;
+  constructor (private payload: Project[]) {}
 }
 
 export class AddProject implements Action {
@@ -33,6 +39,7 @@ export class DeleteProject implements Action {
 }
 
 export type ProjectActions = SelectProject
+                           | LoadProjects
                            | AddProject
                            | UpdateProject
                            | DeleteProject;
