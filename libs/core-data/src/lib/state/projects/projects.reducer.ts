@@ -1,6 +1,6 @@
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { ProjectsActionTypes, ProjectsActions } from './projects.actions';
 import { Project } from './../../projects/project.model';
-import { ProjectsActionTypes } from './projects.actions';
-import { EntityAdapter, EntityState, createEntityAdapter } from '@ngrx/entity';
 
 export const initialProjects: Project[] = [
   {
@@ -29,7 +29,7 @@ export const initialProjects: Project[] = [
   }
 ];
 
-const addProject = (projects, project) => [...projects, project];
+const createProject = (projects, project) => [...projects, project];
 const updateProject = (projects, project) => projects.map(p => {
   return p.id === project.id ? Object.assign({}, project) : p;
 });
@@ -38,7 +38,7 @@ const deleteProject = (projects, project) => projects.filter(w => project.id !==
 // 01 Define the shape of my state
 
 export interface ProjectsState extends EntityState<Project> {
-  selectedProjectId : string | null;
+  selectedProjectId: string | null;
 }
 // 1a Create Entity Adapter
 export const adapter: EntityAdapter<Project> = createEntityAdapter<Project>();
@@ -50,29 +50,29 @@ export const initialState: ProjectsState = adapter.getInitialState({
 
 
 //03 Build the most simplest reducer
-export function projectsReducer(
-  state = initialState, action): ProjectsState {
+export function projectsReducers(
+  state = initialState, action: ProjectsActions): ProjectsState {
     switch(action.type) {
-      case ProjectsActionTypes.SelectProject:
+      case ProjectsActionTypes.ProjectSelected:
         return Object.assign({}, state, {selectedProjectId: action.payload});
 
-      case ProjectsActionTypes.LoadProjects:
-        return adapter.addMany(action.payload, state);
+      case ProjectsActionTypes.ProjectsLoaded:
+        return adapter.addAll(action.payload, state);
 
-      case ProjectsActionTypes.AddProject:
+      case ProjectsActionTypes.ProjectAdded:
         // delegate to a stand alone function
         // Why? Because it is TESTABLE!
         // Nested Logic, alongside Hidden State are 2 of the "Axis of Evil of Testing"
         return adapter.addOne(action.payload, state);
 
       case ProjectsActionTypes.UpdateProject:
-        return adapter.updateOne(action.payload, state);
-
+        //return adapter.updateOne(action.payload.id, state);
+        return adapter.updateOne({id: action.payload.id, changes: action.payload}, state);
       case ProjectsActionTypes.DeleteProject:
         // delegate to a stand alone function
         // Why? Because it is TESTABLE!
         // Nested Logic, alongside Hidden State are 2 of the "Axis of Evil of Testing"
-        return adapter.removeOne(action.payload, state)
+        return adapter.removeOne(action.payload.id, state)
 
         default:
         return state;
@@ -81,9 +81,7 @@ export function projectsReducer(
 
 // Selectors
 
-export const getSelectedProjectId = (state : ProjectsState) => state.selectedProjectId;
-
-const {selectIds, selectEntities, selectAll} = adapter.getSelectors();
+const { selectIds, selectEntities, selectAll } = adapter.getSelectors();
 
 export const selectProjectIds = selectIds;
 export const selectProjectEntities = selectEntities;

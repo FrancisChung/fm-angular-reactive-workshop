@@ -11,23 +11,14 @@ export interface AppState {
 // Add in feature reducer into combined reducer
 export const reducers: ActionReducerMap<AppState> = {
   customers: fromCustomers.customersReducer,
-  projects : fromProjects.projectsReducer
+  projects: fromProjects.projectsReducers
 };
 
 // -------------------------------------------------------------------
-// CUSTOMERS SELECTORS
+// PROJECTS SELECTORS
 // -------------------------------------------------------------------
-export const selectCustomersState = createFeatureSelector<fromCustomers.CustomersState>('customers');
-
-export const selectAllCustomers = createSelector(
-  selectCustomersState,
-  fromCustomers.selectAllCustomers
-); 
-
-// Projects Selectors
-
 export const selectProjectState
-= createFeatureSelector<fromProjects.ProjectsState>('projects');
+  = createFeatureSelector<fromProjects.ProjectsState>('projects');
 
 export const selectProjectIds = createSelector(
   selectProjectState,
@@ -43,5 +34,15 @@ export const selectAllProjects = createSelector(
   selectProjectState,
   fromProjects.selectAllProjects
 )
+
+// -------------------------------------------------------------------
+// CUSTOMERS SELECTORS
+// -------------------------------------------------------------------
+export const selectCustomersState = createFeatureSelector<fromCustomers.CustomersState>('customers');
+
+export const selectAllCustomers = createSelector(
+  selectCustomersState,
+  fromCustomers.selectAllCustomers
+);
 
 
