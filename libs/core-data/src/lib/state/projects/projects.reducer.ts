@@ -66,7 +66,7 @@ export function projectsReducers(
         return adapter.addOne(action.payload, state);
 
       case ProjectsActionTypes.UpdateProject:
-        //return adapter.updateOne(action.payload.id, state);
+
         return adapter.updateOne({id: action.payload.id, changes: action.payload}, state);
       case ProjectsActionTypes.DeleteProject:
         // delegate to a stand alone function
@@ -80,6 +80,8 @@ export function projectsReducers(
 }
 
 // Selectors
+
+export const getSelectedProjectId = (state: ProjectsState) => state.selectedProjectId;
 
 const { selectIds, selectEntities, selectAll } = adapter.getSelectors();
 
